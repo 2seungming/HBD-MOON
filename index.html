@@ -1,0 +1,1489 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>문지윤 생일 축하해 🎉</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        /* ── 픽셀 폰트 공통 ── */
+        * {
+            font-family: 'Press Start 2P', 'DungGeunMo', monospace !important;
+        }
+
+        @font-face {
+            font-family: 'DungGeunMo';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/DungGeunMo.woff') format('woff');
+        }
+
+        /* 컬러 팔레트 (연한 핑크 계열) */
+        :root {
+            --pink-main:   #f48fb1;   /* 메인 액센트 */
+            --pink-dark:   #e07ca0;   /* 테두리/아웃라인 */
+            --pink-shadow: #d4688e;   /* 픽셀 그림자 */
+            --pink-light:  #ffd6e7;   /* 호버 배경 */
+            --pink-bg:     #fff0f7;   /* 버튼 기본 배경 */
+            --pink-text:   #e07ca0;   /* 텍스트 */
+            --pink-title:  #f48fab;   /* 헤딩 */
+            --start-bg:    #ffb3c6;   /* 시작 버튼 배경 */
+            --start-shadow:#d4688e;   /* 시작 버튼 그림자 */
+        }
+
+        /* 1. 배경 및 공통 설정 */
+        body {
+            background-color: #ffeef5;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+            text-align: center;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            image-rendering: pixelated;
+        }
+
+        /* 2. 공통 버튼 & 레이아웃 */
+        .page {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            padding: 16px;
+            box-sizing: border-box;
+        }
+        #page-1 { display: flex; }
+
+        button {
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            cursor: pointer;
+            image-rendering: pixelated;
+        }
+
+        /* ── 시작 버튼 (페이지 1) ── */
+        button#start-btn {
+            padding: 24px 32px;
+            font-size: 15px;
+            line-height: 2;
+            background-color: var(--start-bg);
+            color: #fff;
+            border: none;
+            border-radius: 0;
+            cursor: pointer;
+            outline: 4px solid var(--pink-shadow);
+            box-shadow:
+                -4px 0 0 0 var(--pink-shadow),
+                 4px 0 0 0 var(--pink-shadow),
+                 0 -4px 0 0 var(--pink-shadow),
+                 0  4px 0 0 var(--pink-shadow),
+                 8px 8px 0 0 var(--pink-shadow);
+            transition: transform 0.1s, box-shadow 0.1s;
+            z-index: 10;
+            text-shadow: 2px 2px 0 var(--pink-shadow);
+            letter-spacing: -0.5px;
+        }
+        button#start-btn:hover {
+            transform: translate(-2px, -2px);
+            box-shadow:
+                -4px 0 0 0 var(--pink-shadow),
+                 4px 0 0 0 var(--pink-shadow),
+                 0 -4px 0 0 var(--pink-shadow),
+                 0  4px 0 0 var(--pink-shadow),
+                 10px 10px 0 0 var(--pink-shadow);
+        }
+        button#start-btn:active {
+            transform: translate(4px, 4px);
+            box-shadow:
+                -4px 0 0 0 var(--pink-shadow),
+                 4px 0 0 0 var(--pink-shadow),
+                 0 -4px 0 0 var(--pink-shadow),
+                 0  4px 0 0 var(--pink-shadow),
+                 2px 2px 0 0 var(--pink-shadow);
+        }
+
+        /* ── 내비 버튼 (back / next) ── */
+        .nav-buttons {
+            display: flex;
+            gap: 14px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .back-btn, .next-btn {
+            padding: 10px 14px;
+            min-height: 40px;
+            min-width: 110px;
+            background-color: var(--pink-bg);
+            border: none;
+            border-radius: 0;
+            color: var(--pink-text);
+            cursor: pointer;
+            font-size: 9px;
+            line-height: 1.6;
+            outline: 4px solid var(--pink-dark);
+            box-shadow:
+                -4px 0 0 0 var(--pink-dark),
+                 4px 0 0 0 var(--pink-dark),
+                 0 -4px 0 0 var(--pink-dark),
+                 0  4px 0 0 var(--pink-dark),
+                 6px 6px 0 0 var(--pink-main);
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+        .back-btn:hover, .next-btn:hover {
+            background-color: var(--pink-light);
+            transform: translate(-2px, -2px);
+            box-shadow:
+                -4px 0 0 0 var(--pink-dark),
+                 4px 0 0 0 var(--pink-dark),
+                 0 -4px 0 0 var(--pink-dark),
+                 0  4px 0 0 var(--pink-dark),
+                 8px 8px 0 0 var(--pink-main);
+        }
+        .back-btn:active, .next-btn:active {
+            transform: translate(4px, 4px);
+            box-shadow:
+                -4px 0 0 0 var(--pink-dark),
+                 4px 0 0 0 var(--pink-dark),
+                 0 -4px 0 0 var(--pink-dark),
+                 0  4px 0 0 var(--pink-dark),
+                 2px 2px 0 0 var(--pink-main);
+        }
+
+        /* 3. 메뉴 화면 (페이지 2) */
+        .icon-group {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .icon-item {
+            cursor: pointer;
+            transition: transform 0.15s;
+            text-align: center;
+            width: 140px;
+        }
+        .icon-item:hover { transform: translateY(-6px); }
+        .icon-item img {
+            width: 120px;
+            height: 120px;
+            border-radius: 0;
+            object-fit: cover;
+            image-rendering: auto;
+        }
+        .icon-label {
+            margin-top: 10px;
+            font-weight: bold;
+            color: var(--pink-title);
+            font-size: 11px;
+        }
+
+        /* 선물 선택 페이지 */
+        .choice-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .choice-btn {
+            padding: 20px 32px;
+            min-height: 60px;
+            font-size: 16px;
+            background-color: #ffffff;
+            color: var(--pink-dark);
+            border: 3px solid var(--pink-main);
+            border-radius: 20px;
+            cursor: pointer;
+            outline: none;
+            box-shadow: 0 4px 12px rgba(244,143,177,0.25);
+            transition: transform 0.15s, box-shadow 0.15s, background-color 0.15s;
+        }
+        .choice-btn:hover {
+            background-color: var(--pink-light);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(244,143,177,0.4);
+        }
+        .choice-btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 6px rgba(244,143,177,0.2);
+        }
+
+        /* 4. 영상 케이크 화면 (페이지 3) */
+        .cake-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .cake-row {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .cake-item {
+            cursor: pointer;
+            width: 75px;
+            height: 75px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid rgba(255,255,255,0.9);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+        .cake-item:hover {
+            transform: scale(1.08);
+            box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+            z-index: 5;
+        }
+        .cake-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* 5. 미로 게임 */
+        #maze-game-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* ── 미로 게임 전용 (원본 스타일 유지) ── */
+        #game-container {
+            position: relative;
+            width: 375px;
+            height: 375px;
+            border: 4px solid #d81b60;
+            background-color: #fce4ec;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            outline: none;
+        }
+
+        .cell {
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            box-sizing: border-box;
+        }
+
+        .wall {
+            background-color: #f48fb1;
+            border: 1px solid #f06292;
+        }
+
+        .cat-pix {
+            z-index: 10;
+            border-radius: 4px 4px 0 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #player {
+            background-color: #ffffff;
+            border-bottom: 3px solid #f8bbd0;
+            box-shadow: 0 -3px 0 #f8bbd0 inset;
+        }
+        #player::after {
+            content: '';
+            width: 4px;
+            height: 4px;
+            background-color: #333;
+            border-radius: 50%;
+            box-shadow: 8px 0 0 0 #333;
+            margin-top: 2px;
+        }
+
+        .npc-black {
+            background-color: #212121;
+            border-bottom: 3px solid #616161;
+        }
+        .npc-black::after {
+            content: '';
+            width: 4px;
+            height: 4px;
+            background-color: #ffeb3b;
+            border-radius: 50%;
+            box-shadow: 8px 0 0 0 #ffeb3b;
+            margin-top: 2px;
+        }
+
+        .npc-orange {
+            background-color: #ff9800;
+            border-bottom: 3px solid #ffcc80;
+            background-image: linear-gradient(to bottom, #e65100 20%, transparent 20%, transparent 80%, #e65100 80%);
+            background-size: 100% 100%;
+        }
+        .npc-orange::after {
+            content: '';
+            width: 4px;
+            height: 4px;
+            background-color: #333;
+            border-radius: 50%;
+            box-shadow: 8px 0 0 0 #333;
+            margin-top: 2px;
+        }
+
+        .gift {
+            z-index: 5;
+            font-size: 20px;
+            text-align: center;
+            line-height: 25px;
+        }
+
+        /* 다이얼로그 (원본 스타일) */
+        #dialog-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            padding: 16px;
+            box-sizing: border-box;
+        }
+
+        #dialog-box {
+            background: #fff !important;
+            padding: 20px !important;
+            border: 4px solid #ff69b4 !important;
+            border-radius: 15px !important;
+            outline: none !important;
+            box-shadow: none !important;
+            max-width: 85%;
+            text-align: center;
+        }
+
+        #dialog-text {
+            margin-bottom: 15px;
+            line-height: 1.5;
+            font-size: 0.95rem !important;
+            word-break: keep-all;
+            color: #333;
+            font-family: 'DungGeunMo', sans-serif !important;
+        }
+
+        .cat-emoji { font-size: 1.2rem !important; font-weight: bold; }
+        .white-emoji { color: #d81b60; }
+        .black-emoji { color: #333; }
+        .orange-emoji { color: #e65100; }
+
+        .option-btn {
+            font-family: 'DungGeunMo', sans-serif !important;
+            font-size: 1rem !important;
+            padding: 10px !important;
+            margin: 5px 0 !important;
+            cursor: pointer;
+            border: 2px solid #000 !important;
+            background: #fff !important;
+            color: #333 !important;
+            width: 100%;
+            min-height: unset !important;
+            border-radius: 0 !important;
+            outline: none !important;
+            box-shadow: 2px 2px 0 #888 !important;
+            line-height: 1.4 !important;
+            transition: none !important;
+            transform: none !important;
+        }
+        .option-btn:active {
+            transform: translate(1px, 1px) !important;
+            box-shadow: 1px 1px 0 #000 !important;
+        }
+        .option-btn:hover {
+            transform: none !important;
+            background: #fff !important;
+            box-shadow: 2px 2px 0 #888 !important;
+        }
+
+        .cake-btn {
+            background-color: #f8bbd0 !important;
+            color: #d81b60 !important;
+            border-color: #d81b60 !important;
+            box-shadow: 2px 2px 0 #f48fb1 !important;
+        }
+
+        .map-img {
+            width: 100%;
+            max-width: 280px;
+            border-radius: 10px;
+            border: 3px solid #d81b60;
+            outline: none !important;
+            box-shadow: none !important;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        /* 미로 컨트롤 (원본 스타일) */
+        #maze-controls {
+            display: grid;
+            grid-template-columns: repeat(3, 60px);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .control-btn {
+            width: 60px !important;
+            height: 60px !important;
+            background: #fff !important;
+            color: #d81b60 !important;
+            border: 2px solid #d81b60 !important;
+            font-size: 1.5rem !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px !important;
+            cursor: pointer;
+            user-select: none;
+            outline: none !important;
+            box-shadow: none !important;
+            transition: none !important;
+            transform: none !important;
+        }
+        .control-btn:hover { transform: none !important; background: #fff !important; box-shadow: none !important; }
+        .control-btn:active { transform: none !important; }
+
+        #maze-hint {
+            margin-top: 10px;
+            font-size: 0.75rem;
+            color: #ec407a;
+            font-family: 'DungGeunMo', sans-serif !important;
+            letter-spacing: -0.3px;
+            line-height: 1.6;
+        }
+
+        /* 미로 페이지 h1/p 오버라이드 */
+        #page-maze h1 {
+            font-family: 'DungGeunMo', sans-serif !important;
+            color: #d81b60 !important;
+            font-size: 1.4rem !important;
+            text-shadow: 1px 1px 0 #fff !important;
+            margin: 0 !important;
+        }
+        #page-maze p {
+            font-family: 'DungGeunMo', sans-serif !important;
+            color: #ec407a !important;
+            font-size: 0.8rem !important;
+            margin-top: 5px !important;
+            line-height: 1.4 !important;
+        }
+
+        /* 헤딩 */
+        h1 {
+            font-size: 16px;
+            line-height: 1.8;
+            color: var(--pink-title);
+            margin-bottom: 8px;
+            text-shadow: 3px 3px 0 #ffd6e7;
+        }
+        h2 {
+            font-size: 14px;
+            line-height: 1.8;
+            color: var(--pink-title);
+            text-shadow: 2px 2px 0 #ffd6e7;
+        }
+        p {
+            font-size: 10px;
+            line-height: 2;
+        }
+
+        /* 6. 마지막 질문 페이지 */
+        .cat {
+            width: 230px;
+            margin: 10px 0 6px;
+            transition: width 0.4s ease;
+            outline: 4px solid var(--pink-main);
+            box-shadow:
+                -4px 0 0 0 var(--pink-main),
+                 4px 0 0 0 var(--pink-main),
+                 0 -4px 0 0 var(--pink-main),
+                 0  4px 0 0 var(--pink-main),
+                 6px 6px 0 0 var(--pink-shadow);
+            image-rendering: auto;
+        }
+
+        .final-text {
+            font-size: 13px;
+            line-height: 2;
+            color: var(--pink-text);
+            font-weight: bold;
+            margin-bottom: 15px;
+            padding: 14px 18px;
+            background-color: var(--pink-bg);
+            outline: 4px solid var(--pink-main);
+            box-shadow:
+                -4px 0 0 0 var(--pink-main),
+                 4px 0 0 0 var(--pink-main),
+                 0 -4px 0 0 var(--pink-main),
+                 0  4px 0 0 var(--pink-main),
+                 6px 6px 0 0 var(--pink-shadow);
+            text-shadow: 2px 2px 0 #ffd6e7;
+        }
+
+        .final-guide-text {
+            margin: 6px 0 14px;
+            font-size: 9px;
+            color: var(--pink-dark);
+            background: rgba(255,255,255,0.85);
+            outline: 3px solid var(--pink-main);
+            box-shadow:
+                -3px 0 0 0 var(--pink-main),
+                 3px 0 0 0 var(--pink-main),
+                 0 -3px 0 0 var(--pink-main),
+                 0  3px 0 0 var(--pink-main),
+                 4px 4px 0 0 var(--pink-shadow);
+            padding: 10px 14px;
+            display: inline-block;
+            line-height: 1.8;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            position: relative;
+            width: 100%;
+            min-height: 120px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .yes-btn {
+            font-size: 13px;
+            width: 155px;
+            min-height: 62px;
+            padding: 14px 0;
+            background-color: var(--start-bg);
+            color: white;
+            border: none;
+            border-radius: 0;
+            cursor: pointer;
+            outline: 4px solid var(--pink-shadow);
+            box-shadow:
+                -4px 0 0 0 var(--pink-shadow),
+                 4px 0 0 0 var(--pink-shadow),
+                 0 -4px 0 0 var(--pink-shadow),
+                 0  4px 0 0 var(--pink-shadow),
+                 8px 8px 0 0 var(--pink-shadow);
+            text-shadow: 2px 2px 0 var(--pink-shadow);
+            z-index: 100;
+            transition: transform 0.1s, box-shadow 0.1s;
+            line-height: 1.6;
+        }
+        .yes-btn:hover {
+            transform: translate(-2px, -2px);
+            box-shadow:
+                -4px 0 0 0 var(--pink-shadow),
+                 4px 0 0 0 var(--pink-shadow),
+                 0 -4px 0 0 var(--pink-shadow),
+                 0  4px 0 0 var(--pink-shadow),
+                 10px 10px 0 0 var(--pink-shadow);
+        }
+        .yes-btn:active {
+            transform: translate(4px, 4px);
+            box-shadow:
+                -4px 0 0 0 var(--pink-shadow),
+                 4px 0 0 0 var(--pink-shadow),
+                 0 -4px 0 0 var(--pink-shadow),
+                 0  4px 0 0 var(--pink-shadow),
+                 2px 2px 0 0 var(--pink-shadow);
+        }
+
+        .no-btn {
+            font-size: 13px;
+            width: 155px;
+            min-height: 62px;
+            padding: 14px 0;
+            background-color: #efefef;
+            color: #777;
+            border: none;
+            border-radius: 0;
+            cursor: pointer;
+            outline: 4px solid #bbb;
+            box-shadow:
+                -4px 0 0 0 #bbb,
+                 4px 0 0 0 #bbb,
+                 0 -4px 0 0 #bbb,
+                 0  4px 0 0 #bbb,
+                 8px 8px 0 0 #999;
+            position: absolute;
+            z-index: 50;
+            transition: left 0.18s ease-out, top 0.18s ease-out, transform 0.18s ease-out;
+            line-height: 1.6;
+        }
+
+        /* 하트 탐색기 */
+        #heart-explorer-container {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        #p5-canvas-container canvas {
+            outline: 4px solid var(--pink-main);
+            box-shadow:
+                -4px 0 0 0 var(--pink-main),
+                 4px 0 0 0 var(--pink-main),
+                 0 -4px 0 0 var(--pink-main),
+                 0  4px 0 0 var(--pink-main),
+                 8px 8px 0 0 var(--pink-shadow);
+            max-width: 100%;
+            height: auto;
+        }
+
+        .graph-controls { margin-top: 15px; text-align: center; }
+
+        input[type=range] {
+            width: 250px;
+            cursor: pointer;
+            accent-color: var(--pink-main);
+        }
+
+        .graph-label {
+            font-size: 11px;
+            font-weight: bold;
+            color: var(--pink-main);
+            margin-bottom: 8px;
+            line-height: 2;
+        }
+
+        /* 편지 모달 */
+        #letter-modal {
+            display: none;
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            background: #fff8fb;
+            padding: 36px 28px;
+            outline: 4px solid var(--pink-main);
+            box-shadow:
+                -4px 0 0 0 var(--pink-main),
+                 4px 0 0 0 var(--pink-main),
+                 0 -4px 0 0 var(--pink-main),
+                 0  4px 0 0 var(--pink-main),
+                 10px 10px 0 0 var(--pink-shadow);
+            width: 85%;
+            max-width: 450px;
+            max-height: 75vh;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .letter-content {
+            text-align: left;
+            line-height: 2.4;
+            color: #555;
+            word-break: keep-all;
+            font-size: 13px;
+            font-family: 'Nanum Gothic', 'Apple SD Gothic Neo', sans-serif !important;
+        }
+
+        /* 폭죽 */
+        .confetti {
+            position: fixed;
+            top: -50px;
+            z-index: 5;
+            pointer-events: none;
+            animation: fall 4.5s linear forwards;
+            opacity: 0;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(0) scale(0) rotate(0deg); opacity: 1; }
+            10% { opacity: 1; transform: translateY(10vh) scale(1.2) rotate(90deg); }
+            100% { transform: translateY(110vh) rotate(720deg) scale(0.5); opacity: 0; }
+        }
+
+        /* 모바일 */
+        @media (max-width: 768px) {
+            body {
+                align-items: flex-start;
+                overflow-y: auto;
+                min-height: 100vh;
+                height: auto;
+            }
+            .page {
+                min-height: 100vh;
+                justify-content: center;
+                padding: 24px 14px 28px;
+            }
+            h1 { font-size: 12px; }
+            h2 { font-size: 11px; }
+            p { font-size: 9px; }
+
+            .icon-group { gap: 16px; }
+            .icon-item { width: 132px; }
+            .icon-item img { width: 110px; height: 110px; }
+
+            .final-text { font-size: 11px; padding: 12px 12px; }
+            .final-guide-text { font-size: 8px; padding: 8px 10px; margin-bottom: 16px; }
+            .cat { width: min(200px, 58vw); }
+
+            .buttons { min-height: 130px; gap: 14px; }
+            .yes-btn, .no-btn { width: 142px; min-height: 60px; font-size: 11px; }
+
+            .back-btn, .next-btn { min-width: 110px; min-height: 40px; font-size: 8px; padding: 10px 12px; }
+
+            .choice-btn { width: min(300px, 80vw); font-size: 13px; }
+
+            #game-container {
+                transform: scale(0.92);
+                transform-origin: top center;
+                margin-bottom: -18px;
+            }
+
+            #maze-controls { grid-template-columns: repeat(3, 70px); gap: 10px; }
+            .control-btn { width: 70px; height: 70px; }
+
+            #dialog-box { max-width: 92%; padding: 18px 12px; }
+            #dialog-text { font-size: 10px; }
+            .option-btn { font-size: 9px; }
+
+            input[type=range] { width: min(240px, 68vw); }
+        }
+
+        @media (max-width: 430px) {
+            .icon-item { width: 44vw; }
+            .icon-item img { width: 92px; height: 92px; }
+            .yes-btn, .no-btn { width: 132px; font-size: 10px; }
+            .back-btn, .next-btn { min-width: 100px; font-size: 7px; }
+            .choice-btn { font-size: 11px; padding: 16px 18px; }
+
+            button#start-btn { font-size: 12px; padding: 20px 22px; }
+
+            #game-container {
+                transform: scale(0.84);
+                margin-bottom: -34px;
+            }
+
+            #maze-hint { font-size: 7px; }
+            .letter-content { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="page-1" class="page">
+        <button id="start-btn" onclick="showPage(2); startCelebration();">🎂 Happy Birthday<br>Jiyoon Moon! 🎂</button>
+    </div>
+
+    <div id="page-2" class="page">
+        <h1>🎉 HAPPY BIRTHDAY MOON 🎉</h1>
+        <p style="color: #c0a0b0; margin-bottom: 20px;">
+            Please turn on the sound 🔊<br>
+            and Click the icons to discover your gifts! ✨<br>
+            Purr-fect on both PC and Mobile! 🐾 💻📱
+        </p>
+        
+        <div class="icon-group">
+            <div class="icon-item" onclick="playMusic()">
+                <img src="https://media.tenor.com/8tgG_KyJqqwAAAAj/happy-happy-happy-happy.gif">
+                <div class="icon-label">🗣️🔊</div>
+            </div>
+            <div class="icon-item" onclick="showPage(3)">
+                <img src="https://i.pinimg.com/originals/00/ed/7d/00ed7d3883039a06b370d1eb026ae156.gif">
+                <div class="icon-label">🐈🎵</div>
+            </div>
+            <div class="icon-item" onclick="showPage('choice')">
+                <img src="https://i.pinimg.com/originals/75/e3/97/75e397c1ed1e8276bca1f23115b17375.gif">
+                <div class="icon-label">🎂💐</div>
+            </div>
+            <div class="icon-item" onclick="openLetter()">
+                <img src="https://i.pinimg.com/originals/f4/b3/aa/f4b3aaa7400915aa71fd58a2e3ed3bd7.gif">
+                <div class="icon-label">💌✏️</div>
+            </div>
+        </div>
+
+        <div class="nav-buttons">
+            <button class="back-btn" onclick="showPage(1)">⬅️ Home</button>
+            <button class="next-btn" onclick="showPage(4)">Next ➡️</button>
+        </div>
+    </div>
+
+    <div id="page-choice" class="page">
+        <h2 style="margin-bottom: 14px;">Select your gift! ✨</h2>
+        <div class="choice-container">
+            <button class="choice-btn" onclick="window.open('https://pin.it/7lGhRtCBh', '_blank')">Image</button>
+            <button class="choice-btn" onclick="showPage('maze'); initGame();">Maze</button>
+            <button class="choice-btn" onclick="showPage('dodge'); initDodgeGame();">Dodge</button>
+        </div>
+        <button class="back-btn" style="margin-top: 40px;" onclick="showPage(2)">⬅ Back to Menu</button>
+    </div>
+
+    <div id="page-maze" class="page">
+        <div id="maze-game-wrapper">
+            <div class="header">
+                <h1>Go to Birthday Party!</h1>
+                <p style="color: var(--pink-text);">Find the cake for the birthday party! 🎂</p>
+            </div>
+            <div id="game-container"></div>
+            <div id="maze-controls">
+                <div style="grid-column: 2" class="control-btn" id="btn-up">▲</div>
+                <div style="grid-column: 1" class="control-btn" id="btn-left">◀</div>
+                <div style="grid-column: 2" class="control-btn" id="btn-down">▼</div>
+                <div style="grid-column: 3" class="control-btn" id="btn-right">▶</div>
+            </div>
+            <div id="maze-hint">🕹️ Use on-screen buttons or keyboard arrows</div>
+        </div>
+        <button class="back-btn" style="margin-top: 20px;" onclick="showPage('choice')">⬅ Back</button>
+    </div>
+
+    <!-- ── Dodge 게임 페이지 ── -->
+    <div id="page-dodge" class="page">
+        <div id="dodge-wrapper" style="display:flex; flex-direction:column; align-items:center;">
+            <div id="dodge-container" style="position:relative; border:6px solid #fff; background-color:#4169E1; image-rendering:pixelated;">
+                <canvas id="dodgeCanvas"></canvas>
+                <div id="dodge-win-menu" style="position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:none;flex-direction:column;justify-content:center;align-items:center;text-align:center;z-index:10;">
+                    <h1 id="dodge-win-title" style="color:#FFD700;font-size:22px;font-family:'Courier New',monospace;">100점 돌파!<br>생일 축하해!</h1>
+                    <div id="dodge-win-btns">
+                        <button onclick="dodgeShowGiftText()" style="background:#32CD32;border:4px solid #fff;color:white;padding:10px 20px;margin:8px;cursor:pointer;font-family:'Courier New',monospace;font-weight:bold;font-size:15px;box-shadow:4px 4px 0 #000;">Claim Your Gift!</button>
+                        <button onclick="dodgeContinue()" style="background:#555;border:4px solid #fff;color:white;padding:10px 20px;margin:8px;cursor:pointer;font-family:'Courier New',monospace;font-weight:bold;font-size:15px;box-shadow:4px 4px 0 #000;">Continue..</button>
+                    </div>
+                </div>
+                <div id="dodge-gameover-menu" style="position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:none;flex-direction:column;justify-content:center;align-items:center;text-align:center;z-index:10;">
+                    <h1 style="color:#ff4d4d;font-size:36px;font-family:'Courier New',monospace;">GAME OVER</h1>
+                    <p id="dodge-final-score" style="font-size:20px;color:white;font-family:'Courier New',monospace;"></p>
+                    <button onclick="dodgeReset()" style="background:#ff4d4d;border:4px solid #fff;color:white;padding:10px 20px;margin:8px;cursor:pointer;font-family:'Courier New',monospace;font-weight:bold;font-size:15px;box-shadow:4px 4px 0 #000;">Try Again</button>
+                </div>
+            </div>
+            <div style="display:flex;margin-top:16px;gap:30px;">
+                <div id="dodge-left" style="width:72px;height:72px;background:#444;border:4px solid #fff;color:white;font-size:26px;display:flex;justify-content:center;align-items:center;cursor:pointer;user-select:none;">◀</div>
+                <div id="dodge-right" style="width:72px;height:72px;background:#444;border:4px solid #fff;color:white;font-size:26px;display:flex;justify-content:center;align-items:center;cursor:pointer;user-select:none;">▶</div>
+            </div>
+            <div id="maze-hint">🕹️ Use on-screen buttons or keyboard arrows</div>
+        </div>
+        <button class="back-btn" style="margin-top:20px;" onclick="showPage('choice'); dodgeStop();">⬅Quit Game </button>
+    </div>
+
+    <div id="page-3" class="page">
+        <p style="color: var(--pink-main); margin-bottom: 5px; font-weight: bold;">
+            Tap them one by one. ✨
+        </p>
+        <div style="font-size: 30px; margin-bottom: 5px;">🕯️</div>
+        <div class="cake-container">
+            <div class="cake-row">
+                <div class="cake-item" onclick="window.open('https://youtu.be/wSGoUSwNb44?si=9eUW5IvKui8cZ0sh')"><img src="https://i.pinimg.com/originals/94/64/14/946414d219a6bf867f749b0e16b5512d.gif"></div>
+            </div>
+            <div class="cake-row">
+                <div class="cake-item" onclick="window.open('https://youtube.com/shorts/FblZRpDy394?si=IihAScyzVDBHGxht')"><img src="https://i.pinimg.com/originals/19/7c/3e/197c3e6a419aa39aae35254866dca99d.gif"></div>
+                <div class="cake-item" onclick="window.open('https://youtu.be/IGEY3e2xzbE?si=uEZ5It7OZwRBuGed')"><img src="https://i.pinimg.com/originals/79/c9/27/79c927899e629e8e27a3a21c9666697b.gif"></div>
+            </div>
+            <div class="cake-row">
+                <div class="cake-item" onclick="window.open('https://www.youtube.com/watch?v=dV-8ATv9XAE')"><img src="https://i.pinimg.com/originals/84/a0/39/84a039a26877d4555b3535374f93d84d.gif"></div>
+                <div class="cake-item" onclick="window.open('https://www.youtube.com/watch?v=Xn9-CxSXXS4')"><img src="https://i.pinimg.com/originals/75/ea/e9/75eae99f858fdb27a1a0ea0bee1a1ab6.gif"></div>
+                <div class="cake-item" onclick="window.open('https://www.youtube.com/watch?v=_JsemaQu-5w')"><img src="https://i.pinimg.com/originals/b7/dd/bc/b7ddbc957715a4f1f1c688852f55c799.gif"></div>
+            </div>
+            <div class="cake-row">
+                <div class="cake-item" onclick="window.open('https://youtube.com/shorts/S_n0rQ_iJ-s?si=YZ92tS6hTAsGXwDt')"><img src="https://i.pinimg.com/originals/e6/16/89/e61689c071ab2e2bfe6897053512c2f7.gif"></div>
+                <div class="cake-item" onclick="window.open('https://youtube.com/shorts/RntwqrSKt4g?si=M7Z0UUvTojw9TLUv')"><img src="https://i.pinimg.com/originals/bf/0a/44/bf0a4493b29bde40772d83c0df21dbeb.gif"></div>
+                <div class="cake-item" onclick="window.open('https://youtu.be/cmaMnqrNM8o?si=rlIQietEcgei0t6P')"><img src="https://i.pinimg.com/originals/5d/2f/a3/5d2fa32c1d5d13938d64a48786c0e83c.gif"></div>
+                <div class="cake-item" onclick="window.open('https://youtu.be/piWcA289stE?si=yv9r_WQUa33cCLpK')"><img src="https://i.pinimg.com/originals/83/57/be/8357bebd30c910170985118100e2c3a3.gif"></div>
+            </div>
+        </div>
+        <button class="back-btn" style="margin-top: 20px;" onclick="showPage(2)">⬅ Back to Menu</button>
+    </div>
+
+    <div id="page-4" class="page">
+        <div class="final-text" id="question-text">Did you enjoy this birthday page? 🎂</div>
+        
+        <img src="https://i.pinimg.com/originals/90/9a/25/909a259dc8f1571c95c94bc6245163be.gif" class="cat" id="final-cat">
+
+        <div id="heart-explorer-container">
+            <div id="p5-canvas-container"></div>
+            <div class="graph-controls">
+                <div class="graph-label">💗💗: <span id="kVal">0.1</span></div>
+                <input type="range" id="kSlider" min="0.01" max="100" step="0.01" value="0.01">
+            </div>
+        </div>
+        
+        <div class="buttons" id="button-container">
+            <button class="yes-btn" onclick="handleYes()">Yes! 😍🎉</button>
+            <button class="no-btn" id="no-btn" onmouseover="moveNoButton()" ontouchstart="moveNoButton(); return false;">No.. 🥺</button>
+        </div>
+
+        <div class="nav-buttons">
+            <button class="back-btn" id="reset-btn" onclick="resetAll()">⬅ Back to Menu</button>
+        </div>
+    </div>
+
+    <div id="dialog-overlay">
+        <div id="dialog-box">
+            <div id="dialog-text"></div>
+            <div id="option-container"></div>
+        </div>
+    </div>
+
+    <div id="letter-modal" onclick="this.style.display='none'">
+        <h2 style="text-align: center; margin-bottom: 16px;">To. 문지윤 🌙</h2>
+        <div class="letter-content">
+            문지윤 안녕, 생일 진심으로 축하해 🎂<br><br>
+            이번에는 조금 색다른 방식으로 편지를 남겨봤어. 물론 마음만 먹으면 언제든 손편지를 쓸 수 있지만, AI 시대를 살아가는 만큼 이런 방법도 한 번 시도해봤어ㅋㅋㅋ 어때? >.< 영상과 이미지 선택은 직접했구, 프롬프트 열심히 입력하구, 제미나이, 버던트, 클로드, 열심히 굴렸다...!(월요일 만남을 미룬 이유..) 진짜 세상 좋아졌다.. 불과 3년전까지만 해도 오류 가득한 지피티 열심히 굴리면서 코드 만들었거든? 이젠 지피티 잘 안써... 진짜 인공지능 기술 발전 장난아니다.. 그래도 AI가 마음에 안드는 이미지 가져오길래 좀 이미지랑 영상은 좀 노가다 했어ㅠㅋㅋㅋ 2일 자정에 카톡 예약하기 설정하려다가,, 케익이 빠질 수 없고, 편지도 빠질 수 없고, 어떻게 반응할지 궁금해서 만났을 때 공개하고 싶었어 ㅋㅋㅋㅋ 신박한 아이디어로 새로운 것들 더 추가하고 싶었고, 기깔나고 미친 미감의 화려한 생일 축하 페이지를 만들고 싶었지만, 프롬프트와 코드가 너무너무 장황해지고 복잡해져서 이게 나의 최선이었어ㅠㅠ..  비개발자의 한계가 느껴지더라도,,, 네 생일 이렇게 축하해준 사람은 없을 거라고 믿어.. 제발 그래야만 함.<br><br>
+            10대 시절의 생일축하는 사실 또렷하게 떠오르진 않는데, 20대의 네 생일들은 완벽하진 않아도 어느 정도 기억에 남아 있는 걸 보니, 네가 나에게 점점 더 짙게 자리 잡았다는 증거 같아서 두터운 우정임을 느끼곤 해^-^ㅋㅋㅋ 똑같은 방식을 반복하면 지루해하는 너에게 새로운 방식으로 생일을 축하해주고 싶은 나의 진심가득한 마음이 느껴지니????? 아물론 생일 축하는 똑같은 방식이더라도 1년에 한번뿐이니 전혀 지루해하지 않는다는 사실도 알아 ㅋㅋㅋ <br><br>고등학생 때는 마냥 네가 활달하고, 이성적이고, 합리적이고, 냉철하면서 웃긴 친구라 생각했는데, 시간을 함께 보내며 알게 된 너는 전략적이고 고차원적으로 다정하고, 따뜻하고, 정도 많고, 섬세하면서 웃긴 사람이더라. (결국에 웃긴 건 똑같고, 문마-문지윤마스터-했다는 스토리.)
+            어느새 우리가 13년동안 우정을 이어왔다는 사실이 참 소중하고 신기해. 10대의 끝자락부터 20대의 시작과 마무리, 그리고 30대의 출발까지… 하루하루를 쌓아가다 보면 어느새 또 40대를 응원하고 있겠지?ㅜ... 나중에 할머니가 돼서도 걍 부르면 만나고, 초딩같이 놀고, 웃고 떠들면서 지낼 수 있었으면 좋겠어. <br><br>
+            아무쪼록 올해는 모든 일이 순조롭게 풀려서, 네가 원하는 학교 합격하길 언제나 진심으로 응원할게. <br><br>
+            이 편지는 물에 젖지도 않고, 불에 타지도 않고, 잃어버리지도 못해. 인터넷에 영원히 남아있을 나의 생일 축하 편지야. 영원한 건 없다지만.. 그래도.. 마이크로소프트가 건재한 이 세상 속에서 데이터가 유실될 일 없을 거라 믿어....ㅋㅋㅋ 디지털 세상이 멸망하지 않는 이상 이 편지 데이터는 영원히 남아있겠지...?..ㅋㅋㅋㅋㅋ<br><br>
+            생일 많이 많이 많이 축하해 ♥️<br><br>FROM. ㅇㅅㅁ
+        </div>
+        <p style="text-align: center; color: #bbb; margin-top: 20px;">(Click anywhere to close)</p>
+    </div>
+
+    <script>
+        /* --- 페이지 전환 --- */
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => page.style.display = 'none');
+            const targetPage = document.getElementById('page-' + pageId);
+            if (targetPage) targetPage.style.display = 'flex';
+            
+            if (pageId === 4) {
+                const noBtn = document.getElementById('no-btn');
+                noBtn.style.position = 'relative';
+                noBtn.style.left = '0';
+                noBtn.style.top = '0';
+                noBtn.style.display = 'inline-block';
+
+                document.getElementById('button-container').style.display = 'flex';
+                document.getElementById('final-cat').style.display = 'inline-block';
+                document.getElementById('heart-explorer-container').style.display = 'none';
+                document.getElementById('question-text').innerHTML = "Did you enjoy this birthday page? 🎂";
+                document.getElementById('reset-btn').innerText = "⬅ Back to Menu";
+            } else {
+                noLoop();
+                document.getElementById('heart-explorer-container').style.display = 'none';
+            }
+        }
+
+        /* --- p5.js 하트 로직 --- */
+        let slider;
+        let kLabel;
+        let isP5Active = false;
+
+        function setup() {
+            let canvas = createCanvas(300, 300);
+            canvas.parent('p5-canvas-container');
+            slider = document.getElementById('kSlider');
+            kLabel = document.getElementById('kVal');
+            noLoop();
+        }
+
+        function draw() {
+            background('#ffeef5');
+            let k = parseFloat(slider.value);
+            kLabel.innerText = k.toFixed(1);
+
+            translate(width / 2, height / 2 + 30);
+            scale(60, -60);
+
+            stroke(244, 143, 177);
+            strokeWeight(0.05);
+            noFill();
+
+            beginShape();
+            for (let x = -1.732; x <= 1.732; x += 0.01) {
+                let term1 = Math.pow(Math.abs(x), 2 / 3);
+                let term2 = 0.9 * Math.sin(k * x) * Math.sqrt(3 - x * x);
+                let y = term1 + term2;
+                vertex(x, y);
+            }
+            endShape();
+        }
+
+        /* --- 미로 게임 로직 --- */
+        const mazeData = [
+            ['S',0,1,1,1,1,1,1,1,1,1,1,1,1,1],
+            [1,0,0,0,0,0,1,0,0,0,0,0,0,0,1],
+            [1,1,1,1,1,0,1,0,1,1,1,1,1,0,1],
+            [1,0,0,0,1,2,1,0,1,0,0,0,1,0,1],
+            [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1],
+            [1,0,1,0,0,0,0,0,0,0,1,0,0,1,1],
+            [1,0,1,1,1,1,1,1,1,1,1,1,1,0,1],
+            [1,0,0,0,0,0,0,0,0,0,0,0,1,0,1],
+            [1,1,1,1,1,1,1,1,1,1,1,0,1,0,1],
+            [1,0,0,0,0,0,0,0,0,0,1,0,1,0,1],
+            [1,0,1,1,1,1,1,1,1,0,1,0,1,0,1],
+            [1,0,1,0,0,3,0,0,1,0,0,0,1,0,1],
+            [1,0,1,0,1,1,1,0,1,1,1,1,1,0,1],
+            [1,0,0,0,1,0,0,0,0,0,0,0,0,0,0],
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,'E']
+        ];
+
+        const whiteCatEmoji = '<span class="cat-emoji white-emoji">(=^･ω･^=)</span>';
+        const blackCatEmoji = '<span class="cat-emoji black-emoji">(=^･ェ･^=)</span>';
+        const orangeCatEmoji = '<span class="cat-emoji orange-emoji">(=^òωó^=)</span>';
+
+        let playerPos = { x: 0, y: 0 };
+        let isDialogOpen = false;
+        let eventDone = { black: false, orange: false };
+
+        function initGame() {
+            const container = document.getElementById('game-container');
+            container.innerHTML = '';
+            eventDone = { black: false, orange: false };
+
+            for (let y = 0; y < 15; y++) {
+                for (let x = 0; x < 15; x++) {
+                    const type = mazeData[y][x];
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.style.left = (x * 25) + 'px';
+                    cell.style.top = (y * 25) + 'px';
+
+                    if (type === 1) {
+                        cell.classList.add('wall');
+                    } else if (type === 'S') {
+                        playerPos = { x, y };
+                    } else if (type === 'E') {
+                        cell.classList.add('gift');
+                        cell.innerText = '🎂';
+                    } else if (type === 2) {
+                        cell.id = 'npc-black';
+                        cell.classList.add('cat-pix', 'npc-black');
+                    } else if (type === 3) {
+                        cell.id = 'npc-orange';
+                        cell.classList.add('cat-pix', 'npc-orange');
+                    }
+
+                    container.appendChild(cell);
+                }
+            }
+
+            const player = document.createElement('div');
+            player.id = 'player';
+            player.className = 'cell cat-pix';
+            container.appendChild(player);
+            updatePlayer();
+        }
+
+        function updatePlayer() {
+            const p = document.getElementById('player');
+            if (p) {
+                p.style.left = (playerPos.x * 25) + 'px';
+                p.style.top = (playerPos.y * 25) + 'px';
+            }
+        }
+
+        function move(dx, dy) {
+            if (isDialogOpen || document.getElementById('page-maze').style.display === 'none') return;
+
+            const nx = playerPos.x + dx;
+            const ny = playerPos.y + dy;
+
+            if (nx < 0 || nx >= 15 || ny < 0 || ny >= 15) return;
+            if (mazeData[ny][nx] === 1) return;
+
+            playerPos.x = nx;
+            playerPos.y = ny;
+            updatePlayer();
+            checkTrigger(mazeData[ny][nx]);
+        }
+
+        function checkTrigger(cellType) {
+            if (cellType === 2 && !eventDone.black) {
+                isDialogOpen = true;
+                eventDone.black = true;
+                showDialog(
+                    blackCatEmoji + "<br>야, 너 오늘 생일이라며? <br>나랑 같이 놀래?",
+                    [
+                        { text: "응!! (함께 논다)", action: 'fail_black' },
+                        { text: "아니ㅠㅠ (파티 가야 해)", action: 'pass_black' }
+                    ]
+                );
+            } else if (cellType === 3 && !eventDone.orange) {
+                isDialogOpen = true;
+                eventDone.orange = true;
+                showDialog(
+                    orangeCatEmoji + "<br>누나, 어디가요?<br>나랑 같이 놀아요... (글썽)",
+                    [
+                        { text: "유혹에 넘어간다. (같이 논다)", action: 'fail_orange' },
+                        { text: "매정하게 뿌리치고 간다.", action: 'pass_orange' }
+                    ]
+                );
+            } else if (cellType === 'E') {
+                gameSuccess();
+            }
+        }
+
+        function showDialog(text, options) {
+            const dialogTextNode = document.getElementById('dialog-text');
+            const optionContainer = document.getElementById('option-container');
+            dialogTextNode.innerHTML = text;
+            optionContainer.innerHTML = '';
+
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn' + (opt.isCake ? ' cake-btn' : '');
+                btn.innerText = opt.text;
+                btn.onclick = () => handleOption(opt.action);
+                optionContainer.appendChild(btn);
+            });
+
+            document.getElementById('dialog-overlay').style.display = 'flex';
+        }
+
+        function handleOption(action) {
+            const dialogTextNode = document.getElementById('dialog-text');
+            const optionContainer = document.getElementById('option-container');
+
+            switch(action) {
+                case 'fail_black':
+                    dialogTextNode.innerHTML = blackCatEmoji + "랑 너무 신나게 놀아서<br>생일 파티 시간이 다 지나버렸어요! 🌙";
+                    optionContainer.innerHTML = '<button class="option-btn" onclick="initGame(); closeDialog();">Try Again</button>';
+                    break;
+
+                case 'pass_black':
+                    dialogTextNode.innerHTML = blackCatEmoji + ": 치.. 알겠어! 생일 축하해🎉!<br>얼른 가봐!";
+                    optionContainer.innerHTML = '<button class="option-btn" onclick="closeDialog();">고마워! 안녕!</button>';
+                    const nb = document.getElementById('npc-black');
+                    if (nb) nb.style.display = 'none';
+                    break;
+
+                case 'fail_orange':
+                    dialogTextNode.innerHTML = orangeCatEmoji + "와 놀아주다가<br>친구들이 모두 집에 가버렸어요... ㅠㅠ";
+                    optionContainer.innerHTML = '<button class="option-btn" onclick="initGame(); closeDialog();">Try Again</button>';
+                    break;
+
+                case 'pass_orange':
+                    dialogTextNode.innerHTML = whiteCatEmoji + ":<br>님 내 스타일 아니니 꺼져.";
+                    optionContainer.innerHTML = '<button class="option-btn" onclick="handleOption(\'spit_orange\')">퉤!</button>';
+                    break;
+
+                case 'spit_orange':
+                    dialogTextNode.innerHTML = orangeCatEmoji + ": ㅠㅠ... (충격받아 사라짐)";
+                    optionContainer.innerHTML = '';
+                    const no = document.getElementById('npc-orange');
+                    if (no) no.style.display = 'none';
+                    setTimeout(() => { closeDialog(); }, 2000);
+                    break;
+
+                case 'get_cake':
+                    dialogTextNode.innerHTML = `
+                        <a href="https://naver.me/GXAaT9Jq" target="_blank">
+                            <img src="https://i.pinimg.com/originals/3e/e0/14/3ee014f1ca84605dec4ad71591917285.gif" class="map-img" alt="지도">
+                        </a>
+                        <br>
+                        <span style="font-size:8px; color:#888;">Tap the photo above to navigate!</span>
+                        <br>
+                        <b style="color: var(--pink-text); font-size:10px;">Happy Birthday!</b>
+                        <br>
+                        For more details, ask your friend >.<
+                    `;
+                    optionContainer.innerHTML = `
+                        <button class="option-btn" onclick="initGame(); closeDialog();">Play Again</button>
+                        <button class="option-btn" onclick="closeDialog(); showPage(2);">⬅ Back to Menu</button>
+                    `;
+                    break;
+            }
+        }
+
+        function closeDialog() {
+            document.getElementById('dialog-overlay').style.display = 'none';
+            isDialogOpen = false;
+        }
+
+        function gameSuccess() {
+            isDialogOpen = true;
+            const dialogTextNode = document.getElementById('dialog-text');
+            const optionContainer = document.getElementById('option-container');
+
+            dialogTextNode.innerHTML = `${whiteCatEmoji} ${blackCatEmoji} ${orangeCatEmoji}<br><br><b style='color: var(--pink-text); font-size:11px;'>🎉 You made it! 🎉</b><br>Welcome to the party!`;
+            optionContainer.innerHTML = '';
+
+            const btnAgain = document.createElement('button');
+            btnAgain.className = 'option-btn';
+            btnAgain.innerText = 'Play Again?';
+            btnAgain.onclick = () => { initGame(); closeDialog(); };
+
+            const btnCake = document.createElement('button');
+            btnCake.className = 'option-btn cake-btn';
+            btnCake.innerText = 'Get your birthday cake!';
+            btnCake.onclick = () => handleOption('get_cake');
+
+            optionContainer.appendChild(btnAgain);
+            optionContainer.appendChild(btnCake);
+            document.getElementById('dialog-overlay').style.display = 'flex';
+        }
+
+        window.onkeydown = (e) => {
+            if (e.key === 'ArrowUp') move(0, -1);
+            if (e.key === 'ArrowDown') move(0, 1);
+            if (e.key === 'ArrowLeft') move(-1, 0);
+            if (e.key === 'ArrowRight') move(1, 0);
+        };
+
+        document.getElementById('btn-up').onclick = () => move(0, -1);
+        document.getElementById('btn-down').onclick = () => move(0, 1);
+        document.getElementById('btn-left').onclick = () => move(-1, 0);
+        document.getElementById('btn-right').onclick = () => move(1, 0);
+
+        /* --- 축하 효과 --- */
+        function startCelebration() {
+            for (let i = 0; i < 200; i++) {
+                setTimeout(createPrismConfetti, i * 15);
+            }
+        }
+
+        function createPrismConfetti() {
+            const shapes = ['★', '♥', '🌙', '✧', '✦'];
+            const colors = ['#ffb7c5', '#ffd6e7', '#ffccf9', '#fffacd', '#e8b4e8', '#ffffff'];
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.innerText = shapes[Math.floor(Math.random() * shapes.length)];
+            confetti.style.color = colors[Math.floor(Math.random() * colors.length)];
+            confetti.style.left = Math.random() * 100 + 'vw';
+            confetti.style.fontSize = (Math.random() * 15 + 10) + 'px';
+            confetti.style.animationDuration = (Math.random() * 2 + 2.5) + 's';
+            document.body.appendChild(confetti);
+            setTimeout(() => confetti.remove(), 5000);
+        }
+
+        /* --- 기타 기능 --- */
+        function playMusic() {
+            const msg = new SpeechSynthesisUtterance("생일 축 하 합니다 ♫♬ 생일 축 하 합니다♫♬ 사랑하는 문 지 윤 ♥ 생 일 축 하 합니다♫♬ 문 지 윤 파이팅!");
+            msg.lang = 'ko-KR';
+            msg.rate = 1.1;
+            window.speechSynthesis.speak(msg);
+            alert("🥰: 생일 축 하 합니다 ♫♬ 생일 축 하 합니다♫♬ 사랑하는 문 지 윤 ♥ 생 일 축 하 합니다♫♬ 문 지 윤 파이팅!");
+        }
+
+        function openLetter() {
+            const password = prompt("💌 비밀번호를 입력해주세요!\n(힌트: 4자리 = 너 + 나 + 26년 내가 새해 첫 메세지 보낸 시간)");
+            if (password === "1037") {
+                document.getElementById('letter-modal').style.display = 'block';
+            } else if (password !== null) {
+                alert("❌ 비밀번호가 틀렸어요! 다시 한 번 생각해보세요 >.<");
+            }
+        }
+
+        /* --- No 버튼 도망 --- */
+        function moveNoButton() {
+            const noBtn = document.getElementById('no-btn');
+            const margin = 20;
+            noBtn.style.position = 'fixed';
+
+            const btnWidth = noBtn.offsetWidth;
+            const btnHeight = noBtn.offsetHeight;
+
+            const minX = margin;
+            const minY = margin;
+            const maxX = Math.max(minX, window.innerWidth - btnWidth - margin);
+            const maxY = Math.max(minY, window.innerHeight - btnHeight - margin);
+
+            const randomX = Math.floor(Math.random() * (maxX - minX + 1)) + minX;
+            const randomY = Math.floor(Math.random() * (maxY - minY + 1)) + minY;
+
+            noBtn.style.left = randomX + 'px';
+            noBtn.style.top = randomY + 'px';
+        }
+
+        function handleYes() {
+            document.getElementById('final-cat').style.display = 'none';
+            document.getElementById('button-container').style.display = 'none';
+
+            document.getElementById('question-text').innerHTML = "I'm so glad you liked it! <br> Happy Birthday, MOON! ❤️";
+            document.getElementById('heart-explorer-container').style.display = 'flex';
+
+            isP5Active = true;
+            loop();
+
+            document.getElementById('reset-btn').innerText = "⬅ Start Over";
+            startCelebration();
+        }
+
+        function resetAll() {
+            isP5Active = false;
+            noLoop();
+            showPage(1);
+        }
+
+        /* ══════════════════════════════
+           DODGE 게임 로직
+        ══════════════════════════════ */
+        const dodgeCanvas = document.getElementById("dodgeCanvas");
+        const dctx = dodgeCanvas.getContext("2d");
+        const dodgeContainer = document.getElementById("dodge-container");
+        const dodgeWinMenu = document.getElementById("dodge-win-menu");
+        const dodgeGameoverMenu = document.getElementById("dodge-gameover-menu");
+
+        dodgeCanvas.width = 360;
+        dodgeCanvas.height = 500;
+
+        let dScore, dLives, dGameSpeed, dItems, dGameState;
+        let dSpawnInterval, dLastSpawnTime, dWinReached;
+        let dBgHue, dShake, dInvincible;
+        const DODGE_INV_DUR = 300;
+        const dPlayer = { x: 156, y: 435, w: 48, h: 42, speed: 11 };
+        const dKeys = {};
+        let dRafId = null;
+
+        function initDodgeGame() {
+            dScore = 0; dLives = 5; dGameSpeed = 3.2; dItems = [];
+            dGameState = "PLAYING"; dSpawnInterval = 1100;
+            dWinReached = false; dBgHue = 225; dShake = 0; dInvincible = 0;
+            dPlayer.x = 156;
+            dodgeContainer.style.backgroundColor = "#4169E1";
+            dodgeWinMenu.style.display = "none";
+            dodgeGameoverMenu.style.display = "none";
+            document.getElementById("dodge-win-title").innerHTML = "100점 돌파!!";
+            document.getElementById("dodge-win-btns").style.display = "block";
+            dLastSpawnTime = performance.now();
+            if (dRafId) cancelAnimationFrame(dRafId);
+            dRafId = requestAnimationFrame(dLoop);
+        }
+
+        function dodgeStop() {
+            dGameState = "STOPPED";
+            if (dRafId) { cancelAnimationFrame(dRafId); dRafId = null; }
+        }
+
+        // 입력
+        document.getElementById("dodge-left").onmousedown   = () => dKeys["ArrowLeft"] = true;
+        document.getElementById("dodge-left").onmouseup     = () => dKeys["ArrowLeft"] = false;
+        document.getElementById("dodge-right").onmousedown  = () => dKeys["ArrowRight"] = true;
+        document.getElementById("dodge-right").onmouseup    = () => dKeys["ArrowRight"] = false;
+        document.getElementById("dodge-left").ontouchstart  = (e) => { e.preventDefault(); dKeys["ArrowLeft"] = true; };
+        document.getElementById("dodge-left").ontouchend    = () => dKeys["ArrowLeft"] = false;
+        document.getElementById("dodge-right").ontouchstart = (e) => { e.preventDefault(); dKeys["ArrowRight"] = true; };
+        document.getElementById("dodge-right").ontouchend   = () => dKeys["ArrowRight"] = false;
+
+        // 키보드는 미로와 충돌하지 않도록 dodge 페이지가 보일 때만 처리
+        document.addEventListener("keydown", (e) => {
+            if (document.getElementById("page-dodge").style.display !== "none") {
+                if (e.key === "ArrowLeft" || e.key === "ArrowRight") dKeys[e.code] = true;
+            }
+        });
+        document.addEventListener("keyup", (e) => { dKeys[e.code] = false; });
+
+        function dUpdate(ts) {
+            if (dGameState !== "PLAYING") return;
+            if (dKeys["ArrowLeft"]  && dPlayer.x > 0) dPlayer.x -= dPlayer.speed;
+            if (dKeys["ArrowRight"] && dPlayer.x < dodgeCanvas.width - dPlayer.w) dPlayer.x += dPlayer.speed;
+            if (dInvincible > 0) dInvincible--;
+
+            let diff = 1.0;
+            if (dScore >= 100) { diff = 2.8; dGameSpeed += 0.0035; dBgHue = (dBgHue + 1) % 360; dodgeContainer.style.backgroundColor = `hsl(${dBgHue},70%,40%)`; }
+            else if (dScore >= 70) { diff = 2.0; dGameSpeed += 0.0022; }
+            else if (dScore >= 30) { diff = 1.3; dGameSpeed += 0.0015; }
+            else { diff = 0.8; dGameSpeed += 0.0005; }
+            if (dShake > 0) dShake *= 0.9;
+
+            dSpawnInterval = Math.max(130, (1100 - dScore * 4) / diff);
+            if (ts - dLastSpawnTime > dSpawnInterval) {
+                const r = Math.random();
+                const type = r < 0.05 ? "GOLDEN_FISH" : r < 0.5 ? "GIFT" : "BOMB";
+                dItems.push({ x: Math.random() * (dodgeCanvas.width - 32), y: -40, w: 32, h: 32, type });
+                dLastSpawnTime = ts;
+            }
+
+            dItems.forEach((item, i) => {
+                item.y += dGameSpeed;
+                if (item.x < dPlayer.x + dPlayer.w - 8 && item.x + item.w > dPlayer.x + 8 &&
+                    item.y < dPlayer.y + dPlayer.h - 5 && item.y + item.h > dPlayer.y + 5) {
+                    if (item.type === "BOMB") {
+                        if (dInvincible <= 0) {
+                            dLives--; dShake = 15;
+                            if (dLives <= 0) {
+                                dGameState = "GAMEOVER";
+                                dodgeContainer.style.backgroundColor = "#1a1a1a";
+                                document.getElementById("dodge-final-score").innerText = "최종 점수: " + dScore;
+                                dodgeGameoverMenu.style.display = "flex";
+                            }
+                        } else { dShake = 2; }
+                    } else if (item.type === "GOLDEN_FISH") {
+                        dInvincible = DODGE_INV_DUR; dScore += 20; dShake = 10;
+                    } else {
+                        dScore += 10; dShake = dScore >= 100 ? 8 : 3;
+                        if (dScore >= 100 && !dWinReached) {
+                            dGameState = "PAUSE"; dWinReached = true;
+                            dodgeWinMenu.style.display = "flex";
+                        }
+                    }
+                    dItems.splice(i, 1);
+                }
+                if (item.y > dodgeCanvas.height) dItems.splice(i, 1);
+            });
+        }
+
+        function dDraw() {
+            dctx.clearRect(0, 0, dodgeCanvas.width, dodgeCanvas.height);
+            dctx.save();
+            if (dShake > 0.5) dctx.translate(Math.random()*dShake - dShake/2, Math.random()*dShake - dShake/2);
+
+            // 고양이
+            const px = dPlayer.x, py = dPlayer.y;
+            if (dInvincible > 0) {
+                dctx.strokeStyle = (dInvincible % 10 < 5) ? "#FFD700" : "white";
+                dctx.lineWidth = 4;
+                dctx.strokeRect(px - 4, py - 4, dPlayer.w + 8, dPlayer.h + 8);
+            }
+            dctx.fillStyle = "white";
+            dctx.fillRect(px + 6, py, 12, 12); dctx.fillRect(px + dPlayer.w - 18, py, 12, 12);
+            dctx.fillStyle = "#FFC0CB";
+            dctx.fillRect(px + 9, py + 3, 6, 6); dctx.fillRect(px + dPlayer.w - 15, py + 3, 6, 6);
+            dctx.fillStyle = "white";
+            dctx.fillRect(px, py + 9, dPlayer.w, 33); dctx.fillRect(px + 3, py + 6, dPlayer.w - 6, 36);
+            dctx.fillStyle = "black";
+            dctx.fillRect(px + 12, py + 21, 6, 6); dctx.fillRect(px + dPlayer.w - 18, py + 21, 6, 6);
+            dctx.fillStyle = "#FFC0CB";
+            dctx.fillRect(px + dPlayer.w/2 - 3, py + 30, 6, 3);
+
+            // 아이템
+            dItems.forEach(item => {
+                if (item.type === "BOMB") {
+                    dctx.fillStyle = "black"; dctx.fillRect(item.x+6,item.y+8,20,20); dctx.fillRect(item.x+2,item.y+12,28,12);
+                    dctx.fillStyle = "#8B4513"; dctx.fillRect(item.x+14,item.y+2,4,6);
+                    dctx.fillStyle = Math.random()>0.5?"orange":"red"; dctx.fillRect(item.x+12,item.y,8,3);
+                } else if (item.type === "GOLDEN_FISH") {
+                    dctx.fillStyle = "#FFD700"; dctx.fillRect(item.x+4,item.y+10,20,12); dctx.fillRect(item.x+24,item.y+6,4,20);
+                    dctx.fillStyle = "black"; dctx.fillRect(item.x+8,item.y+12,3,3);
+                } else {
+                    dctx.fillStyle = "#32CD32"; dctx.fillRect(item.x,item.y,32,32);
+                    dctx.fillStyle = "#FFD700"; dctx.fillRect(item.x,item.y+12,32,8); dctx.fillRect(item.x+12,item.y,8,32);
+                }
+            });
+            dctx.restore();
+
+            // UI
+            dctx.fillStyle = "white"; dctx.font = "bold 22px 'Courier New'";
+            dctx.fillText(`SCORE: ${dScore}`, 14, 36);
+            dctx.fillStyle = "#ff4d4d"; dctx.fillText("❤".repeat(dLives), dodgeCanvas.width - 130, 36);
+            if (dInvincible > 0) {
+                dctx.fillStyle = "#FFD700"; dctx.font = "bold 14px 'Courier New'";
+                dctx.fillText("INVINCIBLE!", 14, 86);
+                dctx.fillRect(14, 94, (dInvincible/DODGE_INV_DUR)*100, 5);
+            }
+            dctx.font = "bold 13px 'Courier New'";
+            if (dScore >= 100)      { dctx.fillStyle = "#FFD700"; dctx.fillText("∞ INFINITY RUSH!", 14, 62); }
+            else if (dScore >= 70)  { dctx.fillStyle = "#ff4d4d"; dctx.fillText("LEVEL: HARD", 14, 62); }
+            else if (dScore >= 30)  { dctx.fillStyle = "white";   dctx.fillText("LEVEL: NORMAL", 14, 62); }
+            else                    { dctx.fillStyle = "#32CD32"; dctx.fillText("LEVEL: EASY", 14, 62); }
+        }
+
+        function dodgeShowGiftText() {
+            document.getElementById("dodge-win-title").innerHTML = "필요한 선물을<br>말해주세요";
+            document.getElementById("dodge-win-btns").style.display = "none";
+            setTimeout(dodgeContinue, 2000);
+        }
+        function dodgeContinue() {
+            dGameState = "PLAYING"; dodgeWinMenu.style.display = "none";
+            document.getElementById("dodge-win-btns").style.display = "block";
+            dLastSpawnTime = performance.now();
+        }
+        function dodgeReset() { initDodgeGame(); }
+
+        function dLoop(ts) {
+            dUpdate(ts); dDraw();
+            dRafId = requestAnimationFrame(dLoop);
+        }
+    </script>
+</body>
+</html>
